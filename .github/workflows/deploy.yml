@@ -1,0 +1,62 @@
+name: Deploy API to AWS Lambda
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'infra/**'
+
+# Necessário para o OIDC da AWS funcionar
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Build, Package and Terraform Apply
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Build Lambda Package
+        run: |
+          cd backend
+          pip install --target ./package -r requirements.txt
+          cp *.py ./package/
+          cp -r core db models routers schemas services ./package/ || true
+          cd package
+          zip -r ../lambda_package.zip .
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./infra
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./infra
+        env:
+          TF_VAR_aws_region: "us-east-1"
+          TF_VAR_project_name: "inho"
+          TF_VAR_environment: "production"
+          TF_VAR_database_url: ${{ secrets.DATABASE_URL }}
+          TF_VAR_secret_key: ${{ secrets.SECRET_KEY }}
+          TF_VAR_frontend_url: ${{ secrets.FRONTEND_URL }}

@@ -1,0 +1,15 @@
+# ══════════════════════════════════════════════════════════════════
+# infra/terraform.tfvars.example
+# Copie para terraform.tfvars e preencha os valores reais.
+# terraform.tfvars está no .gitignore — NUNCA faça commit dele.
+# ══════════════════════════════════════════════════════════════════
+
+aws_region   = "us-east-1"
+project_name = "inho"
+environment  = "production"
+
+frontend_url = "https://seu-frontend.vercel.app"  # <-- altere
+
+# Secrets — preencha no terraform.tfvars local ou via TF_VAR_* no CI/CD
+# database_url = "postgresql+asyncpg://user:pass@host.neon.tech:6543/inho_db?sslmode=require"
+# secret_key   = "cole-aqui-o-resultado-de-openssl-rand-hex-32"
