@@ -24,9 +24,19 @@ resource "aws_apigatewayv2_api" "http_api" {
   protocol_type = "HTTP"
 
   cors_configuration {
-    allow_origins = [var.frontend_url, "http://localhost:3000"]
+    allow_origins = [
+      var.frontend_url, 
+      "http://localhost:3000",
+      "https://inho.vercel.app",
+      "https://inhobussiness.vercel.app",
+      "https://app-inho.vercel.app",
+      "https://www.orbesystems.com.br",
+      "https://orbesystems.com.br",
+      "https://inho.orbesystems.com.br"
+    ]
     allow_methods = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
-    allow_headers = ["Content-Type", "Authorization"]
+    allow_headers = ["Content-Type", "Authorization", "X-Request-ID", "Accept"]
+    allow_credentials = true
     max_age       = 300
   }
 }
