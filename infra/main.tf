@@ -9,10 +9,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "inho-terraform-state"
+    bucket         = "inho-tf-state-orbe-99231"
     key            = "prod/serverless.tfstate"
     region         = "us-east-1"
-    dynamodb_table = "inho-terraform-lock"
+    dynamodb_table = "inho-tf-lock-orbe-99231"
     encrypt        = true
   }
 }
