@@ -5,7 +5,7 @@ from typing import List
 import uuid
 
 from db.session import get_db
-from models.models import User, Account, Transaction, PDVSale, AuditLog
+from models.models import User, PDVSale, AuditLog
 from core.deps import require_super_admin
 from schemas.admin_schemas import (
     GlobalStatsOut, UserListOut, UserRoleUpdate, UserStatusUpdate, AuditLogOut
@@ -22,11 +22,10 @@ async def get_global_stats(
     users_count = await db.scalar(select(func.count(User.id)))
     
     # Contas ativas
-    accounts_count = await db.scalar(select(func.count(Account.id)).where(Account.is_active == True))
+    accounts_count = 0
     
     # Volume total de transações
-    tx_volume = await db.scalar(select(func.sum(Transaction.amount)))
-    tx_volume = tx_volume or 0
+    tx_volume = 0
     
     # Volume total de vendas PDV
     pdv_volume = await db.scalar(select(func.sum(PDVSale.total_amount)))
@@ -97,6 +96,6 @@ async def list_audit_logs(
     db: AsyncSession = Depends(get_db),
     admin: User = Depends(require_super_admin)
 ):
-    result = await db.execute(select(AuditLog).order_by(AuditLog.created_at.desc()).offset(skip).limit(limit))
+    result = await db.execute(select(AuditLog).order_by(AuditLog.timestamp.desc()).offset(skip).limit(limit))
     logs = result.scalars().all()
     return logs

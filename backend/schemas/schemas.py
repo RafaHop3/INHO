@@ -13,6 +13,7 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     full_name: str = Field(..., min_length=2, max_length=100)
     password: str = Field(..., min_length=8)
+    whatsapp: Optional[str] = None
 
 
 class LoginRequest(BaseModel):
@@ -35,6 +36,7 @@ class UserOut(BaseModel):
     id: UUID
     email: str
     full_name: str
+    whatsapp: Optional[str]
     role: UserRole
     is_active: bool
     is_verified: bool
@@ -47,6 +49,9 @@ class UserOut(BaseModel):
 class UserUpdate(BaseModel):
     full_name: Optional[str] = Field(None, min_length=2, max_length=100)
     password: Optional[str] = Field(None, min_length=8)
+    whatsapp: Optional[str] = None
+    role: Optional[UserRole] = None
+    whatsapp: Optional[str] = None
 
 
 

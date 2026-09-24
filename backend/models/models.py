@@ -43,6 +43,7 @@ class User(Base):
     email           = Column(String(255), unique=True, nullable=False, index=True)
     full_name       = Column(String(255), nullable=False)
     hashed_password = Column(String(255), nullable=False)
+    whatsapp        = Column(String(20), nullable=True)
     role            = Column(Enum(UserRole), nullable=False, default=UserRole.CLIENT)
     is_active       = Column(Boolean, default=True, nullable=False)
     is_verified     = Column(Boolean, default=False, nullable=False)

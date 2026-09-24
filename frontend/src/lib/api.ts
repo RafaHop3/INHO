@@ -95,6 +95,7 @@ async function apiFetch<T>(
     ...options,
     headers,
     credentials: 'include', // always send cookies (refresh token)
+    cache: 'no-store',
   });
 
   // ── 401 Interception ────────────────────────────────────────────
@@ -157,6 +158,19 @@ export const usersApi = {
 export const auditApi = {
   listMyLogs: () => apiFetch<any[]>('/api/v1/audit/me'),
   listAllLogs: () => apiFetch<any[]>('/api/v1/audit/all'),
+};
+
+// ── WhatsApp Bot ───────────────────────────────────────────────────
+export const whatsappApi = {
+  send: async (payload: { phone: string; message: string }) => {
+    const res = await fetch('http://localhost:3001/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error('Falha ao disparar WhatsApp. Verifique se o Baileys bot está rodando na porta 3001.');
+    return res.json();
+  },
 };
 
 // ── Contracts ─────────────────────────────────────────────────────
@@ -232,3 +246,6 @@ export const pcoApi = {
     apiFetch<any>('/api/v1/pco/', { method: 'POST', body: JSON.stringify(payload) }),
   get: (id: string) => apiFetch<any>(`/api/v1/pco/${id}`),
 };
+
+export const adminApi: any = {};
+export const accountsApi: any = {};

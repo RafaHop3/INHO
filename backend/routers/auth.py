@@ -35,6 +35,7 @@ async def register(
         email=body.email,
         full_name=body.full_name,
         hashed_password=hash_password(body.password),
+        whatsapp=body.whatsapp,
     )
     db.add(user)
     await db.flush()
@@ -130,5 +131,10 @@ async def refresh(
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(response: Response):
-    response.delete_cookie("inho_refresh_token")
+    response.delete_cookie(
+        key="inho_refresh_token",
+        httponly=True,
+        secure=True,
+        samesite="lax"
+    )
     return None
