@@ -74,7 +74,14 @@ app = FastAPI(
 # ── Middleware ────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+        "https://www.orbesystems.com.br",
+        "https://orbesystems.com.br",
+        "https://inho.vercel.app"
+    ] + [o.strip('[]"\\' ') for str_val in settings.ALLOWED_ORIGINS for o in str_val.split(',')],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "X-Request-ID", "Accept"],
