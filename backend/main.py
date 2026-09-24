@@ -80,7 +80,10 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "https://www.orbesystems.com.br",
         "https://orbesystems.com.br",
-        "https://inho.vercel.app"
+        "https://inho.vercel.app",
+        "https://inhobussiness.vercel.app",
+        "https://app-inho.vercel.app",
+        "https://inho.orbesystems.com.br"
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
