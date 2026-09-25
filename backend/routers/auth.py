@@ -80,7 +80,7 @@ async def login(
         value=refresh,
         httponly=True,
         secure=True,
-        samesite="lax",
+        samesite="none",
         max_age=7 * 86400  # 7 days
     )
 
@@ -123,7 +123,7 @@ async def refresh(
         value=refresh_new,
         httponly=True,
         secure=True,
-        samesite="lax",
+        samesite="none",
         max_age=7 * 86400
     )
 
@@ -135,6 +135,6 @@ async def logout(response: Response):
         key="inho_refresh_token",
         httponly=True,
         secure=True,
-        samesite="lax"
+        samesite="none"
     )
     return None
