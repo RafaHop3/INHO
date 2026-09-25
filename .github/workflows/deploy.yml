@@ -31,7 +31,7 @@ jobs:
       - name: Build Lambda Package
         run: |
           cd backend
-          pip install --target ./package -r requirements.txt
+          pip install --target ./package -r requirements.txt --upgrade
           cp *.py ./package/
           cp -r core db models routers schemas services ./package/ || true
           cd package
