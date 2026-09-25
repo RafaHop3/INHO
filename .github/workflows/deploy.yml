@@ -56,6 +56,18 @@ jobs:
         run: terraform init
         working-directory: ./infra
 
+      - name: Debug variables
+        run: |
+          echo "DATABASE_URL_LEN=${#SECRET_DB}"
+          echo "SECRET_KEY_LEN=${#SECRET_SK}"
+          echo "FRONTEND_URL_LEN=${#FRONTEND_SECRET}"
+          echo "VARS_FRONT=${#VARS_FR}"
+        env:
+          SECRET_DB: ${{ secrets.DATABASE_URL }}
+          SECRET_SK: ${{ secrets.SECRET_KEY }}
+          FRONTEND_SECRET: ${{ secrets.FRONTEND_URL }}
+          VARS_FR: ${{ vars.FRONTEND_URL }}
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: ./infra
@@ -65,4 +77,4 @@ jobs:
           TF_VAR_environment: "production"
           TF_VAR_database_url: ${{ secrets.DATABASE_URL }}
           TF_VAR_secret_key: ${{ secrets.SECRET_KEY }}
-          TF_VAR_frontend_url: ${{ secrets.FRONTEND_URL }}
+          TF_VAR_frontend_url: ${{ vars.FRONTEND_URL }}
