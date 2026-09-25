@@ -25,7 +25,7 @@ const PROTECTED_PREFIXES = ['/dashboard', '/admin'];
 const AUTH_ROUTES = ['/login', '/register'];
 
 // The cookie name set by FastAPI's /auth/login endpoint
-const REFRESH_COOKIE = 'inho_refresh';
+const REFRESH_COOKIE = 'inho_refresh_token';
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
