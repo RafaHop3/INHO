@@ -115,7 +115,7 @@ async def health_check(request: Request):
         "service": "inho-api",
         "version": settings.APP_VERSION,
         "env": settings.APP_ENV,
-        "database": "connected" if request.app.state.db_ready else "unavailable",
+        "database": "connected" if getattr(request.app.state, "db_ready", False) else "unavailable",
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
