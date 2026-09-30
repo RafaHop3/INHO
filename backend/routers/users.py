@@ -19,14 +19,10 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.get("/me", response_model=UserOut)
 async def get_me(
-    current: Annotated[dict, Depends(get_current_user)],
-    db: AsyncSession = Depends(get_db),
+    current: Annotated[User, Depends(get_current_user)],
 ):
-    result = await db.execute(select(User).where(User.id == current["sub"]))
-    user = result.scalar_one_or_none()
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
-    return user
+    # get_current_user already loads the User from DB — just return it directly
+    return current
 
 
 @router.get("/", response_model=list[UserOut], dependencies=[Depends(require_admin)])
@@ -40,7 +36,7 @@ async def update_user(
     user_id: UUID,
     body: UserUpdate,
     request: Request,
-    current: Annotated[dict, Depends(require_admin)],
+    current: Annotated[User, Depends(require_admin)],
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(select(User).where(User.id == user_id))
@@ -54,7 +50,7 @@ async def update_user(
 
     await write_audit(
         db, AuditAction.UPDATE, "User",
-        user_id=UUID(current["sub"]), entity_id=str(user_id),
+        user_id=current.id, entity_id=str(user_id),
         detail=changes, request=request,
     )
     await db.commit()

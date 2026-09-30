@@ -24,8 +24,18 @@ async def get_current_user(
     if not payload or payload.get("type") != "access":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token invalido ou expirado")
 
-    user_id = payload.get("sub")
-    result = await db.execute(select(User).where(User.id == user_id))
+    user_identifier = payload.get("sub")
+    
+    try:
+        import uuid
+        # Test if it's a valid UUID
+        uuid.UUID(str(user_identifier))
+        # It's a UUID, so query by User.id
+        result = await db.execute(select(User).where(User.id == user_identifier))
+    except ValueError:
+        # It's not a UUID (likely an email from Orbe Hub legacy or external SSO)
+        result = await db.execute(select(User).where(User.email == str(user_identifier)))
+        
     user: User | None = result.scalar_one_or_none()
 
     if not user or not user.is_active:

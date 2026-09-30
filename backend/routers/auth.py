@@ -108,8 +108,15 @@ async def refresh(
     if not payload or payload.get("type") != "refresh":
         raise HTTPException(status_code=401, detail="Refresh token invalido")
 
-    user_id = payload.get("sub")
-    result  = await db.execute(select(User).where(User.id == user_id))
+    user_identifier = payload.get("sub")
+    
+    try:
+        import uuid
+        uuid.UUID(str(user_identifier))
+        result = await db.execute(select(User).where(User.id == user_identifier))
+    except ValueError:
+        result = await db.execute(select(User).where(User.email == str(user_identifier)))
+        
     user: User | None = result.scalar_one_or_none()
 
     if not user or not user.is_active:

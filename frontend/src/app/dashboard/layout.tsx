@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (!auth.isAuthenticated() || auth.isExpired()) {
-      auth.clear();
+      auth.clearAccessToken();
       router.replace('/login');
     } else {
       setAuthenticated(true);

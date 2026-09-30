@@ -60,7 +60,6 @@ export default function LoginPage() {
             Bem-vindo de <span className="text-shimmer">volta</span>
           </h1>
           <p className="text-inho-muted text-sm">Acesse sua conta com segurança</p>
-
         </div>
 
         {/* Card */}

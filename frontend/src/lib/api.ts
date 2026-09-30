@@ -161,14 +161,18 @@ export const auditApi = {
 };
 
 // ── WhatsApp Bot ───────────────────────────────────────────────────
+const BAILEYS_URL = typeof window !== 'undefined' && window.location.protocol === 'https:'
+  ? '/api/proxy-baileys'
+  : (process.env.NEXT_PUBLIC_BAILEYS_URL ?? 'http://localhost:3001');
+
 export const whatsappApi = {
   send: async (payload: { phone: string; message: string }) => {
-    const res = await fetch('http://localhost:3001/send', {
+    const res = await fetch(`${BAILEYS_URL}/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error('Falha ao disparar WhatsApp. Verifique se o Baileys bot está rodando na porta 3001.');
+    if (!res.ok) throw new Error('Falha ao disparar WhatsApp. Verifique se o Baileys bot está acessível.');
     return res.json();
   },
 };

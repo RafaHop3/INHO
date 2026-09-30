@@ -30,6 +30,11 @@ export const auth = {
     _accessToken = null;
   },
 
+  /** Alias for clearAccessToken() — kept for backwards compatibility */
+  clear() {
+    _accessToken = null;
+  },
+
   /** True if we have a token in memory AND it's not expired */
   isAuthenticated(): boolean {
     if (!_accessToken) return false;
