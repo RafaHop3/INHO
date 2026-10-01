@@ -18,28 +18,13 @@ router = APIRouter()
 @router.get("/seed")
 async def run_lambda_seed(db: AsyncSession = Depends(get_db)):
     try:
-        # Nuclear approach: Hard drop and recreate all tables from DeclarativeBase
-        # This completely cures Supabase / RDS Proxy caching schema drift and missing columns
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-            await conn.run_sync(Base.metadata.create_all)
+        # Schema reflection diagnostic
+        cols = await db.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';"))
+        columns = [row[0] for row in cols.fetchall()]
+        return {"status": "debug", "columns": columns}
         
         
-        # Format the cryptographic hashing natively
-        def get_hash(pwd="Orbe123!"):
-            return bcrypt.hashpw(pwd.encode("utf-8"), bcrypt.gensalt(12)).decode("utf-8")
-            
-        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
-        seed_sql = f"""
-        INSERT INTO users (id, email, full_name, hashed_password, whatsapp, role, is_active, is_verified, created_at, updated_at) VALUES 
-        ('{str(uuid.uuid4())}', 'admin@orbesystems.com.br', 'Rafael Admin', '{get_hash()}', NULL, 'admin', true, true, '{now}', '{now}'),
-        ('{str(uuid.uuid4())}', 'pedro@orbesystems.com.br', 'Pedro Operador', '{get_hash()}', NULL, 'operator', true, true, '{now}', '{now}'),
-        ('{str(uuid.uuid4())}', 'juliana@orbesystems.com.br', 'Juliana Rodrigues', '{get_hash()}', '5551984743957', 'client', true, true, '{now}', '{now}');
-        """
-        
-        await db.execute(text(seed_sql))
-        await db.commit()
-        return {"status": "success", "message": "Database natively re-seeded from AWS Lambda Execution Frame"}
+
     except Exception as e:
         await db.rollback()
         import traceback
