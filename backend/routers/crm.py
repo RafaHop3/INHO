@@ -98,7 +98,10 @@ async def proxy_omnichannel_message(
     async with httpx.AsyncClient() as client:
         try:
             resp = await client.post(baileys_url, json=baileys_payload, timeout=15.0)
+            if resp.status_code != 200:
+                raise Exception(resp.text)
             resp.raise_for_status()
             return {"status": "success", "baileys_response": resp.json()}
         except Exception as e:
-            return {"status": "error", "detail": str(e)}
+            from fastapi import HTTPException
+            raise HTTPException(status_code=400, detail=f"Bot WhatsApp Offline ou Falha (Code: {getattr(resp, 'status_code', 500)}): {str(e)}")

@@ -1,0 +1,8 @@
+
+
+ERR:
+Traceback (most recent call last):
+  File "/app/seed_ec2.py", line 8, in <module>
+    from db.session import async_session_maker
+ModuleNotFoundError: No module named 'db'
+failed to run commands: exit status 1
