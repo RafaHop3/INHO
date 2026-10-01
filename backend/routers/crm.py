@@ -2,8 +2,12 @@ from fastapi import APIRouter
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
 from datetime import datetime, timezone
-from typing import Optional, List
+from typing import Optional, List, Annotated
 import uuid
+import httpx
+
+from core.deps import get_current_user
+from models.models import User
 
 router = APIRouter(prefix="/crm", tags=["CRM"])
 
@@ -77,10 +81,24 @@ class OmnichannelDirectMessage(BaseModel):
 
 
 @router.post("/whatsapp/send")
-async def proxy_omnichannel_message(payload: OmnichannelDirectMessage):
-    # Mock success response
-    return {
-        "status": "success",
-        "whatsapp_delivery_code": [f"{payload.phone}:200"],
-        "email_delivery_code": "Ignorado",
+async def proxy_omnichannel_message(
+    payload: OmnichannelDirectMessage,
+    current_user: Annotated[User, Depends(get_current_user)]
+):
+    # Prefix message securely on backend
+    formatted_message = f"Orbrick>Inho>{current_user.full_name} = {payload.message}"
+    
+    # Send to Baileys proxy on EC2 port 3001
+    baileys_url = "http://52.20.22.241:3001/send"
+    baileys_payload = {
+        "phone": payload.phone,
+        "message": formatted_message
     }
+    
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.post(baileys_url, json=baileys_payload, timeout=15.0)
+            resp.raise_for_status()
+            return {"status": "success", "baileys_response": resp.json()}
+        except Exception as e:
+            return {"status": "error", "detail": str(e)}

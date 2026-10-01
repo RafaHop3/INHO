@@ -160,16 +160,18 @@ export const auditApi = {
   listAllLogs: () => apiFetch<any[]>('/api/v1/audit/all'),
 };
 
-// ── WhatsApp Bot ───────────────────────────────────────────────────
 const BAILEYS_URL = typeof window !== 'undefined' && window.location.protocol === 'https:'
   ? '/api/proxy-baileys'
   : (process.env.NEXT_PUBLIC_BAILEYS_URL ?? 'http://localhost:3001');
 
 export const whatsappApi = {
   send: async (payload: { phone: string; message: string }) => {
-    const res = await fetch(`${BAILEYS_URL}/send`, {
+    const res = await fetch(`${BASE_URL}/api/v1/crm/whatsapp/send`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${auth.getAccessToken()}`
+      },
       body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error('Falha ao disparar WhatsApp. Verifique se o Baileys bot está acessível.');
