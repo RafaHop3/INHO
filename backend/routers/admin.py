@@ -21,6 +21,10 @@ async def run_lambda_seed(db: AsyncSession = Depends(get_db)):
         # Patch schema drifts against the true AWS VPC PostgreSQL target
         await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS full_name VARCHAR(255);"))
         await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS whatsapp VARCHAR(20);"))
+        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS hashed_password VARCHAR(255);"))
+        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50);"))
+        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;"))
+        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT TRUE;"))
         
         # Hard purge existing collision data
         await db.execute(text("TRUNCATE users CASCADE;"))
