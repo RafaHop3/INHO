@@ -25,6 +25,7 @@ async def run_lambda_seed(db: AsyncSession = Depends(get_db)):
         await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50);"))
         await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;"))
         await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT TRUE;"))
+        await db.commit()
         
         # Hard purge existing collision data
         await db.execute(text("TRUNCATE users CASCADE;"))
