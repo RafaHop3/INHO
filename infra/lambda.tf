@@ -14,6 +14,7 @@ resource "aws_lambda_function" "api" {
       SECRET_KEY   = var.secret_key
       FRONTEND_URL = var.frontend_url
       APP_ENV      = var.environment
+      FORCE_UPDATE_CACHE = "1"
     }
   }
 }

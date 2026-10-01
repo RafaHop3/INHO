@@ -12,6 +12,7 @@
  */
 
 import { auth } from './auth';
+import DOMPurify from 'dompurify';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -123,7 +124,23 @@ async function apiFetch<T>(
     throw new Error(msg);
   }
 
-  return data as T;
+  // E2E Security: Recursive XSS Sanitization mapping for all incoming data
+  const sanitizePayload = (obj: any): any => {
+    if (typeof obj === 'string' && typeof window !== 'undefined') {
+      return DOMPurify.sanitize(obj);
+    } else if (Array.isArray(obj)) {
+      return obj.map(sanitizePayload);
+    } else if (obj !== null && typeof obj === 'object') {
+      const mapped: any = {};
+      for (const key in obj) {
+        mapped[key] = sanitizePayload(obj[key]);
+      }
+      return mapped;
+    }
+    return obj;
+  };
+
+  return sanitizePayload(data) as T;
 }
 
 // ── Auth endpoints ─────────────────────────────────────────────────
