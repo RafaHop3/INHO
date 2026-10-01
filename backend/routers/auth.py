@@ -59,16 +59,16 @@ async def login(
     db: AsyncSession = Depends(get_db),
 ):
     try:
-    result = await db.execute(select(User).where(User.email == body.email))
-    user: User | None = result.scalar_one_or_none()
+        result = await db.execute(select(User).where(User.email == body.email))
+        user: User | None = result.scalar_one_or_none()
 
-    if not user or not verify_password(body.password, user.hashed_password):
-        await write_audit(
-            db, AuditAction.FAILED_LOGIN, "User",
-            detail={"email": body.email}, request=request,
-        )
-        await db.commit()
-        raise HTTPException(status_code=401, detail="Credenciais invalidas")
+        if not user or not verify_password(body.password, user.hashed_password):
+            await write_audit(
+                db, AuditAction.FAILED_LOGIN, "User",
+                detail={"email": body.email}, request=request,
+            )
+            await db.commit()
+            raise HTTPException(status_code=401, detail="Credenciais invalidas")
 
 
         if not user.is_active:
