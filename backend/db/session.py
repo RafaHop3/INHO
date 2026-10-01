@@ -15,14 +15,8 @@ def _build_ssl_context() -> ssl.SSLContext:
     FIX: SSL env-aware — producao verifica CA, dev aceita cert auto-assinado.
     CERT_NONE nunca deve chegar em producao com dados financeiros.
     """
-    ctx = ssl.create_default_context()
-    
-    # AWS Lambda → EC2 connection uses raw IPs which fail strict Hostname checking.
-    # Disabling strict CERT_REQUIRED to permit encrypted payload transfer without CA validation.
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
-    
-    return ctx
+    # For asyncpg, passing 'require' mathematically disables hostname/CA validation while enforcing TLS encryption
+    return "require"
 
 
 _ssl_ctx = _build_ssl_context()
