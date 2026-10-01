@@ -15,7 +15,7 @@ from core.config import settings
 from db.session import engine, Base
 from keep_alive import start_keep_alive, stop_keep_alive
 from routers import (
-    auth, users, audit, contracts, sales_orders, pdv, admin, pco
+    auth, users, audit, contracts, sales_orders, pdv, admin, pco, crm
 )
 
 # ... (rest of the file remains same, will be injected correctly by tool if chunk is small, but let's be careful. The tool replaces [StartLine, EndLine] with ReplacementContent)
@@ -102,6 +102,7 @@ app.include_router(contracts.router, prefix="/api/v1")
 app.include_router(sales_orders.router, prefix="/api/v1")
 app.include_router(pdv.router, prefix="/api/v1")
 app.include_router(pco.router, prefix="/api/v1")
+app.include_router(crm.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
 
 
