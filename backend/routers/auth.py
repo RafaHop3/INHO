@@ -50,7 +50,7 @@ async def register(
     return {"message": "Usuario criado com sucesso", "user_id": str(user.id)}
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=dict)
 @_limiter.limit("10/minute")   # FIX: rate limit aplicado — anti brute-force
 async def login(
     request: Request,
@@ -58,6 +58,7 @@ async def login(
     body: LoginRequest,
     db: AsyncSession = Depends(get_db),
 ):
+    try:
     result = await db.execute(select(User).where(User.email == body.email))
     user: User | None = result.scalar_one_or_none()
 
@@ -69,25 +70,28 @@ async def login(
         await db.commit()
         raise HTTPException(status_code=401, detail="Credenciais invalidas")
 
-    if not user.is_active:
-        raise HTTPException(status_code=403, detail="Conta desativada")
 
-    access  = create_access_token(str(user.id), user.role.value)
-    refresh = create_refresh_token(str(user.id))
+        if not user.is_active:
+            raise HTTPException(status_code=403, detail="Conta desativada")
 
-    # Bypassing Starlette set_cookie due to AWS API Gateway / Mangum SameSite=None dropping issues
-    response.headers.append(
-        "Set-Cookie", 
-        f"inho_refresh_token={refresh}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age={7 * 86400}"
-    )
+        access  = create_access_token(str(user.id), user.role.value if hasattr(user.role, "value") else str(user.role))
+        refresh = create_refresh_token(str(user.id))
 
-    await write_audit(
-        db, AuditAction.LOGIN, "User",
-        user_id=user.id, entity_id=str(user.id),
-        detail={"email": user.email}, request=request,
-    )
-    await db.commit()
-    return TokenResponse(access_token=access, refresh_token=refresh)
+        response.headers.append(
+            "Set-Cookie", 
+            f"inho_refresh_token={refresh}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age={7 * 86400}"
+        )
+
+        await write_audit(
+            db, AuditAction.LOGIN, "User",
+            user_id=user.id, entity_id=str(user.id),
+            detail={"email": user.email}, request=request,
+        )
+        await db.commit()
+        return {"access_token": access, "refresh_token": refresh, "token_type": "bearer"}
+    except Exception as e:
+        import traceback
+        return Response(content=f"{str(type(e))} - {str(e)}\n\n{traceback.format_exc()}", status_code=400, media_type="text/plain")
 
 
 @router.post("/refresh", response_model=TokenResponse)
