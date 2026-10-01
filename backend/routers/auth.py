@@ -75,13 +75,10 @@ async def login(
     access  = create_access_token(str(user.id), user.role.value)
     refresh = create_refresh_token(str(user.id))
 
-    response.set_cookie(
-        key="inho_refresh_token",
-        value=refresh,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=7 * 86400  # 7 days
+    # Bypassing Starlette set_cookie due to AWS API Gateway / Mangum SameSite=None dropping issues
+    response.headers.append(
+        "Set-Cookie", 
+        f"inho_refresh_token={refresh}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age={7 * 86400}"
     )
 
     await write_audit(
@@ -125,23 +122,17 @@ async def refresh(
     access      = create_access_token(str(user.id), user.role.value)
     refresh_new = create_refresh_token(str(user.id))
 
-    response.set_cookie(
-        key="inho_refresh_token",
-        value=refresh_new,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        max_age=7 * 86400
+    response.headers.append(
+        "Set-Cookie", 
+        f"inho_refresh_token={refresh_new}; HttpOnly; Secure; SameSite=None; Path=/; Max-Age={7 * 86400}"
     )
 
     return TokenResponse(access_token=access, refresh_token=refresh_new)
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(response: Response):
-    response.delete_cookie(
-        key="inho_refresh_token",
-        httponly=True,
-        secure=True,
-        samesite="none"
+    response.headers.append(
+        "Set-Cookie", 
+        "inho_refresh_token=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0"
     )
     return None
