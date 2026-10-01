@@ -18,12 +18,19 @@ router = APIRouter()
 @router.get("/seed")
 async def run_lambda_seed(db: AsyncSession = Depends(get_db)):
     try:
-        # Schema reflection diagnostic
-        cols = await db.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'users';"))
-        columns = [row[0] for row in cols.fetchall()]
-        return {"status": "debug", "columns": columns}
+        # Patch schema drifts against the true AWS VPC PostgreSQL target
+        # Use full SQL to prevent Postgres caching and silently ignoring columns
+        await db.execute(text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS full_name VARCHAR(255);"))
+        await db.execute(text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS whatsapp VARCHAR(20);"))
+        await db.execute(text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS hashed_password VARCHAR(255);"))
+        await db.execute(text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;"))
+        await db.execute(text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT TRUE;"))
+        await db.commit()
         
-        
+        # Hard purge existing collision data (soft clean out old duplicates first if necessary)
+        # Assuming table is clear or we don't truncate everything to spare dependent rows.
+        # It's safer to just attempt to delete target users:
+        await db.execute(text("DELETE FROM public.users WHERE email IN ('admin@orbesystems.com.br', 'pedro@orbesystems.com.br', 'juliana@orbesystems.com.br');"))
 
     except Exception as e:
         await db.rollback()
