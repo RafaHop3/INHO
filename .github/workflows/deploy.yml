@@ -78,3 +78,7 @@ jobs:
           TF_VAR_database_url: ${{ secrets.DATABASE_URL }}
           TF_VAR_secret_key: ${{ secrets.SECRET_KEY }}
           TF_VAR_frontend_url: ${{ vars.FRONTEND_URL }}
+          
+      - name: Force AWS Lambda Code Update
+        run: aws lambda update-function-code --function-name inho-api --zip-file fileb://../backend/lambda_package.zip --region us-east-1
+        working-directory: ./infra
