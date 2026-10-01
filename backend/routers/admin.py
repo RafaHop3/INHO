@@ -25,6 +25,7 @@ async def run_lambda_seed(db: AsyncSession = Depends(get_db)):
         await db.execute(text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS hashed_password VARCHAR(255);"))
         await db.execute(text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;"))
         await db.execute(text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT TRUE;"))
+        await db.execute(text("ALTER TABLE public.users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW();"))
         await db.commit()
         
         # Hard purge existing collision data (soft clean out old duplicates first if necessary)
