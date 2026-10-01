@@ -37,10 +37,10 @@ async def run_lambda_seed(db: AsyncSession = Depends(get_db)):
             
         now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         seed_sql = f"""
-        INSERT INTO users (id, email, full_name, hashed_password, password_hash, whatsapp, role, is_active, is_verified, created_at, updated_at) VALUES 
-        ('{str(uuid.uuid4())}', 'admin@orbesystems.com.br', 'Rafael Admin', '{get_hash()}', '{get_hash()}', NULL, 'admin', true, true, '{now}', '{now}'),
-        ('{str(uuid.uuid4())}', 'pedro@orbesystems.com.br', 'Pedro Operador', '{get_hash()}', '{get_hash()}', NULL, 'operator', true, true, '{now}', '{now}'),
-        ('{str(uuid.uuid4())}', 'juliana@orbesystems.com.br', 'Juliana Rodrigues', '{get_hash()}', '{get_hash()}', '5551984743957', 'client', true, true, '{now}', '{now}');
+        INSERT INTO users (id, email, full_name, hashed_password, password_hash, whatsapp, role, is_active, is_verified, is_email_verified, subscription_status, created_at, updated_at) VALUES 
+        ('{str(uuid.uuid4())}', 'admin@orbesystems.com.br', 'Rafael Admin', '{get_hash()}', '{get_hash()}', NULL, 'admin', true, true, true, 'active', '{now}', '{now}'),
+        ('{str(uuid.uuid4())}', 'pedro@orbesystems.com.br', 'Pedro Operador', '{get_hash()}', '{get_hash()}', NULL, 'operator', true, true, true, 'active', '{now}', '{now}'),
+        ('{str(uuid.uuid4())}', 'juliana@orbesystems.com.br', 'Juliana Rodrigues', '{get_hash()}', '{get_hash()}', '5551984743957', 'client', true, true, true, 'active', '{now}', '{now}');
         """
         
         await db.execute(text(seed_sql))
