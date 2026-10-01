@@ -8,7 +8,6 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
 from sqlalchemy import text
 
 from core.config import settings
@@ -24,7 +23,12 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(
 logger = logging.getLogger("inho")
 
 # ── Rate Limiter ──────────────────────────────────────────────────
-limiter = Limiter(key_func=get_remote_address, default_limits=[f"{settings.RATE_LIMIT_PER_MINUTE}/minute"])
+def safe_get_remote_address(request: Request) -> str:
+    if not getattr(request, "client", None) or not getattr(request.client, "host", None):
+        return request.headers.get("X-Forwarded-For", "127.0.0.1").split(",")[0].strip()
+    return request.client.host
+
+limiter = Limiter(key_func=safe_get_remote_address, default_limits=[f"{settings.RATE_LIMIT_PER_MINUTE}/minute"])
 
 
 # ── Lifespan ──────────────────────────────────────────────────────
