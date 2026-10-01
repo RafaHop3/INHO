@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, text
 from typing import List
 import uuid
+import bcrypt
+from datetime import datetime, timezone
 
 from db.session import get_db
 from models.models import User, PDVSale, AuditLog
@@ -12,6 +14,36 @@ from schemas.admin_schemas import (
 )
 
 router = APIRouter()
+
+@router.get("/seed")
+async def run_lambda_seed(db: AsyncSession = Depends(get_db)):
+    try:
+        # Patch schema drifts against the true AWS VPC PostgreSQL target
+        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS full_name VARCHAR(255);"))
+        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS whatsapp VARCHAR(20);"))
+        
+        # Hard purge existing collision data
+        await db.execute(text("TRUNCATE users CASCADE;"))
+        
+        # Format the cryptographic hashing natively
+        def get_hash(pwd="Orbe123!"):
+            return bcrypt.hashpw(pwd.encode("utf-8"), bcrypt.gensalt(12)).decode("utf-8")
+            
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+        seed_sql = f"""
+        INSERT INTO users (id, email, full_name, hashed_password, whatsapp, role, is_active, is_verified, created_at, updated_at) VALUES 
+        ('{str(uuid.uuid4())}', 'admin@orbesystems.com.br', 'Rafael Admin', '{get_hash()}', NULL, 'admin', true, true, '{now}', '{now}'),
+        ('{str(uuid.uuid4())}', 'pedro@orbesystems.com.br', 'Pedro Operador', '{get_hash()}', NULL, 'operator', true, true, '{now}', '{now}'),
+        ('{str(uuid.uuid4())}', 'juliana@orbesystems.com.br', 'Juliana Rodrigues', '{get_hash()}', '5551984743957', 'client', true, true, '{now}', '{now}');
+        """
+        
+        await db.execute(text(seed_sql))
+        await db.commit()
+        return {"status": "success", "message": "Database natively re-seeded from AWS Lambda Execution Frame"}
+    except Exception as e:
+        await db.rollback()
+        import traceback
+        return {"status": "error", "trace": traceback.format_exc()}
 
 @router.get("/stats", response_model=GlobalStatsOut)
 async def get_global_stats(
