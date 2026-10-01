@@ -6,7 +6,7 @@ import uuid
 import bcrypt
 from datetime import datetime, timezone
 
-from db.session import get_db
+from db.session import get_db, engine, Base
 from models.models import User, PDVSale, AuditLog
 from core.deps import require_super_admin
 from schemas.admin_schemas import (
@@ -18,17 +18,12 @@ router = APIRouter()
 @router.get("/seed")
 async def run_lambda_seed(db: AsyncSession = Depends(get_db)):
     try:
-        # Patch schema drifts against the true AWS VPC PostgreSQL target
-        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS full_name VARCHAR(255);"))
-        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS whatsapp VARCHAR(20);"))
-        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS hashed_password VARCHAR(255);"))
-        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50);"))
-        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;"))
-        await db.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT TRUE;"))
-        await db.commit()
+        # Nuclear approach: Hard drop and recreate all tables from DeclarativeBase
+        # This completely cures Supabase / RDS Proxy caching schema drift and missing columns
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
         
-        # Hard purge existing collision data
-        await db.execute(text("TRUNCATE users CASCADE;"))
         
         # Format the cryptographic hashing natively
         def get_hash(pwd="Orbe123!"):
