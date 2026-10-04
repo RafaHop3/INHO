@@ -14,7 +14,7 @@
 import { auth } from './auth';
 import DOMPurify from 'dompurify';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+const BASE_URL = 'https://s65ofps3ve.execute-api.us-east-1.amazonaws.com';
 
 // ── Types ──────────────────────────────────────────────────────────
 export interface TokenResponse {
@@ -270,5 +270,26 @@ export const pcoApi = {
   get: (id: string) => apiFetch<any>(`/api/v1/pco/${id}`),
 };
 
-export const adminApi: any = {};
-export const accountsApi: any = {};
+// ── Admin (aggregated stats – admin-only endpoint) ─────────────────────────
+export const adminApi = {
+  getStats: () => apiFetch<any>('/api/v1/admin/stats'),
+  listUsers: () => apiFetch<any[]>('/api/v1/admin/users'),
+  setUserRole: (userId: string, role: string) =>
+    apiFetch<any>(`/api/v1/admin/users/${userId}/role`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    }),
+};
+
+// ── Accounts (placeholder – backend endpoint not yet implemented) ──────────
+// Returns an empty array gracefully so pages that call accountsApi.list()
+// do not crash while the backend endpoint is being built.
+export const accountsApi = {
+  list: (): Promise<any[]> => Promise.resolve([]),
+};
+
+// ── CRM ──────────────────────────────────────────────────────────
+export const crmApi = {
+  listContacts: () => apiFetch<any[]>('/api/v1/crm/contacts'),
+};
+
