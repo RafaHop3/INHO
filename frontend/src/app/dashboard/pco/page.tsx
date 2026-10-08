@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState } from 'react';
@@ -11,6 +10,7 @@ import { BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, R
 export default function PcoDashboardPage() {
   const [showSurveyModal, setShowSurveyModal] = useState(false);
   const [surveySubmitted, setSurveySubmitted] = useState(false);
+  const [surveySuccess, setSurveySuccess] = useState(false);
   const [responsesCount, setResponsesCount] = useState(124);
   const [npsScore, setNpsScore] = useState(72);
 
@@ -52,7 +52,7 @@ export default function PcoDashboardPage() {
     setTimeout(() => {
       // Simulate real-time data update
       setResponsesCount(prev => prev + 1);
-      
+
       // Calculate new NPS based on answers
       const newScore = Math.round((answers.lideranca + answers.comunicacao + answers.ambiente + answers.motivacao) * 5);
       setNpsScore(prev => Math.round((prev * 124 + newScore) / 125));
@@ -68,17 +68,25 @@ export default function PcoDashboardPage() {
 
       setShowSurveyModal(false);
       setSurveySubmitted(false);
+      setSurveySuccess(true);
+      setTimeout(() => setSurveySuccess(false), 3500);
       // Reset form
       setAnswers({ lideranca: 4, comunicacao: 3, ambiente: 5, motivacao: 4, feedback: '' });
-      alert('Pesquisa enviada com sucesso! Obrigado por colaborar.');
     }, 1500);
   };
 
   return (
     <div className="p-8 min-h-screen bg-inho-black text-inho-text">
       <div className="max-w-7xl mx-auto space-y-8 animate-fade-in">
-        
-        {/* Header Breadcrumbs */}
+
+        {/* Success Toast */}
+        {surveySuccess && (
+          <div className="fixed top-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-inho-green/10 border border-inho-green/30 text-inho-green shadow-xl animate-slide-up">
+            <CheckCircle size={16} />
+            <span className="text-sm font-bold">Pesquisa enviada com sucesso! Obrigado por colaborar.</span>
+          </div>
+        )}
+
         <div className="flex items-center gap-4">
           <Link href="/dashboard" className="text-inho-muted hover:text-inho-text transition-colors">
             <ArrowLeft size={20} />
@@ -179,8 +187,8 @@ export default function PcoDashboardPage() {
                 <AreaChart data={trendData}>
                   <defs>
                     <linearGradient id="colorNps" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#a855f7" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#a855f7" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#a855f7" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#1e2d40" vertical={false} />
@@ -236,7 +244,7 @@ export default function PcoDashboardPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowSurveyModal(false)} />
             <div className="relative bg-inho-dark border border-inho-border w-full max-w-lg rounded-2xl p-6 shadow-2xl animate-slide-up z-10 max-h-[90vh] overflow-y-auto">
-              
+
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
                   <Smile className="text-purple-400" />
@@ -264,11 +272,10 @@ export default function PcoDashboardPage() {
                             key={val}
                             type="button"
                             onClick={() => handleAnswerChange(q.key, val)}
-                            className={`w-8 h-8 rounded-lg font-mono text-xs font-bold transition-all border ${
-                              (answers as any)[q.key] === val
-                                ? 'bg-purple-600 border-purple-400 text-inho-text scale-110'
-                                : 'bg-inho-dark/80 border-inho-border text-inho-muted hover:border-purple-500/50 hover:text-purple-400'
-                            }`}
+                            className={`w-8 h-8 rounded-lg font-mono text-xs font-bold transition-all border ${(answers as any)[q.key] === val
+                              ? 'bg-purple-600 border-purple-400 text-inho-text scale-110'
+                              : 'bg-inho-dark/80 border-inho-border text-inho-muted hover:border-purple-500/50 hover:text-purple-400'
+                              }`}
                           >
                             {val}
                           </button>

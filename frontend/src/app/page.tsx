@@ -1,7 +1,7 @@
-// @ts-nocheck
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   ArrowRight, Globe2, ShieldCheck, TrendingUp, Users,
   Zap, Lock, BarChart3, CheckCircle2, ChevronRight, Layers,
@@ -12,10 +12,10 @@ import Counter from '@/components/Counter';
 
 // ── Data ─────────────────────────────────────────────────────────
 const stats = [
-  { value: 5,   suffix: '',    label: 'Níveis de RBAC',           icon: Users },
-  { value: 7,   suffix: '',    label: 'Eventos de Auditoria',     icon: BarChart3 },
-  { value: 3,   suffix: '',    label: 'Camadas de Segurança',     icon: Zap },
-  { value: 100, suffix: '%',   label: 'Operações Auditadas',      icon: Globe2 },
+  { value: 5, suffix: '', label: 'Níveis de RBAC', icon: Users },
+  { value: 7, suffix: '', label: 'Eventos de Auditoria', icon: BarChart3 },
+  { value: 3, suffix: '', label: 'Camadas de Segurança', icon: Zap },
+  { value: 100, suffix: '%', label: 'Operações Auditadas', icon: Globe2 },
 ];
 
 const features = [
@@ -29,7 +29,7 @@ const features = [
   {
     icon: TrendingUp,
     title: 'Impacto Mensurável',
-    description: 'Cada transação é vinculada a métricas de impacto social verificáveis. Transparência total, da origem ao destino.',
+    description: 'Cada transação vinculada a métricas de impacto social verificáveis. Transparência total, da origem ao destino.',
     color: 'green',
     tag: 'ESG Compliance',
   },
@@ -57,7 +57,7 @@ const features = [
   {
     icon: Lock,
     title: 'Open Finance Ready',
-    description: 'Infraestrutura preparada para integração com Banco Central, PIX e APIs de Open Finance. Conformidade regulatória nativa.',
+    description: 'Preparado para integração com Banco Central, PIX e APIs de Open Finance. Conformidade regulatória nativa.',
     color: 'blue',
     tag: 'LGPD & Open Finance',
   },
@@ -72,11 +72,10 @@ const principles = [
   'Monitoramento de anomalias em tempo real',
 ];
 
-// ── Color Map ─────────────────────────────────────────────────────
 const colorMap = {
-  gold:  { bg: 'bg-inho-gold/10',  border: 'border-inho-gold/20',  text: 'text-inho-gold',  glow: 'hover:shadow-inho-gold' },
+  gold: { bg: 'bg-inho-gold/10', border: 'border-inho-gold/20', text: 'text-inho-gold', glow: 'hover:shadow-inho-gold' },
   green: { bg: 'bg-inho-green/10', border: 'border-inho-green/20', text: 'text-inho-green', glow: 'hover:shadow-inho-green' },
-  blue:  { bg: 'bg-inho-blue/10',  border: 'border-inho-blue/20',  text: 'text-inho-blue',  glow: 'hover:glow-green' },
+  blue: { bg: 'bg-inho-blue/10', border: 'border-inho-blue/20', text: 'text-inho-blue', glow: 'hover:glow-green' },
 };
 
 export default function HomePage() {
@@ -87,38 +86,83 @@ export default function HomePage() {
       {/* ══ HERO ═════════════════════════════════════════════════ */}
       <section
         id="hero"
-        className="relative min-h-screen flex items-center justify-center grid-bg overflow-hidden"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
         aria-label="Hero Section"
       >
-        {/* Ambient blobs */}
+        {/* Vector background */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-inho-gold/8 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-inho-green/6 rounded-full blur-3xl animate-float-delayed" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-inho-blue/4 rounded-full blur-3xl" />
+          <Image
+            src="/hero-vector.png"
+            alt=""
+            fill
+            className="object-cover opacity-20 select-none"
+            priority
+          />
+          {/* Subtle dark overlay so text stays readable */}
+          <div className="absolute inset-0 bg-gradient-to-b from-inho-black/60 via-transparent to-inho-black/80" />
+          {/* Ambient colour halos */}
+          <div className="absolute top-1/4 left-1/3 w-[28rem] h-[28rem] bg-inho-gold/6 rounded-full blur-3xl animate-float" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-inho-green/5 rounded-full blur-3xl animate-float-delayed" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32 text-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-36 text-center">
 
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 glassmorphism rounded-full px-5 py-2.5 mb-8 animate-fade-in">
-            <div className="w-2 h-2 bg-inho-green rounded-full animate-pulse" />
-            <span className="font-mono text-xs text-inho-muted uppercase tracking-widest">
-              Fase 1 — Infraestrutura em Produção
+          {/* Status badge */}
+          <div className="inline-flex items-center gap-2.5 border border-inho-gold/20 bg-inho-gold/5 rounded-full px-5 py-2.5 mb-10 animate-fade-in">
+            <div className="w-1.5 h-1.5 bg-inho-green rounded-full animate-pulse" />
+            <span className="font-mono text-[11px] text-inho-muted uppercase tracking-[0.2em]">
+              Infraestrutura Ativa · Fase 1 em Produção
             </span>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black leading-tight mb-8 animate-slide-up">
-            <span className="text-inho-text">Finanças com</span>
-            <br />
-            <span className="text-shimmer">Propósito Global</span>
+          {/* Headline — neon thin style via font-light + text-shimmer */}
+          <h1 className="font-light text-5xl sm:text-6xl lg:text-[5.5rem] xl:text-[6.5rem] leading-[1.05] tracking-tight mb-8 animate-slide-up">
+            <span
+              className="block text-transparent bg-clip-text"
+              style={{
+                backgroundImage: 'linear-gradient(90deg, #F5A623 0%, #FFD97D 50%, #F5A623 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textShadow: 'none',
+                filter: 'drop-shadow(0 0 18px rgba(245,166,35,0.35))',
+              }}
+            >
+              Controle Total.
+            </span>
+            <span
+              className="block font-extralight text-inho-text/90 mt-1"
+              style={{ letterSpacing: '-0.01em' }}
+            >
+              Decisões que salvam
+            </span>
+            <span
+              className="block"
+              style={{
+                backgroundImage: 'linear-gradient(90deg, #00E5C8 0%, #0EA5E9 60%, #00E5C8 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: 'drop-shadow(0 0 20px rgba(0,229,200,0.3))',
+              }}
+            >
+              empresas.
+            </span>
           </h1>
 
-          {/* Sub */}
-          <p className="max-w-2xl mx-auto text-lg sm:text-xl text-inho-muted leading-relaxed mb-12 animate-fade-in">
-            Uma plataforma de gestão financeira construída para <strong className="text-inho-text">alta disponibilidade</strong>,
-            &nbsp;<strong className="text-inho-gold">máxima segurança</strong> e impacto social
-            <strong className="text-inho-green"> mensurável e global</strong>.
+          {/* Hero body copy */}
+          <p className="max-w-3xl mx-auto text-lg sm:text-xl text-inho-muted/80 leading-relaxed mb-6 animate-fade-in font-light tracking-wide">
+            Burocracia financeira{' '}
+            <strong className="font-semibold text-inho-text">mata tempo, capital e oportunidades.</strong>{' '}
+            O INHO elimina isso. Uma plataforma de gestão financeira construída sobre{' '}
+            <strong className="font-semibold text-inho-gold">FastAPI assíncrono</strong>,{' '}
+            <strong className="font-semibold text-inho-blue">PostgreSQL em alta disponibilidade</strong>{' '}
+            e{' '}
+            <strong className="font-semibold text-inho-green">auditoria imutável em tempo real</strong>{' '}
+            — tudo que uma empresa séria precisa para não perder dinheiro enquanto dorme.
+          </p>
+
+          <p className="max-w-2xl mx-auto text-base text-inho-muted/60 leading-relaxed mb-14 animate-fade-in font-mono tracking-wider">
+            Contratos · Pedidos de Venda · Frente de Caixa · CRM · Gestão Organizacional<br className="hidden sm:block" />
+            — integrados. Auditados. Seguros.
           </p>
 
           {/* CTAs */}
@@ -126,26 +170,26 @@ export default function HomePage() {
             <Link
               href="/register"
               id="hero-cta-primary"
-              className="group flex items-center gap-3 px-8 py-4 bg-inho-gold-gradient text-inho-black font-bold text-base rounded-2xl hover:shadow-inho-gold hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto justify-center"
+              className="group flex items-center gap-3 px-9 py-4 bg-inho-gold-gradient text-inho-black font-bold text-base rounded-2xl hover:shadow-inho-gold hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto justify-center"
             >
-              Abrir minha conta
+              Começar por R$&nbsp;290/mês
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link
               href="#about"
               id="hero-cta-secondary"
-              className="flex items-center gap-3 px-8 py-4 glassmorphism text-inho-text font-medium text-base rounded-2xl hover:border-inho-gold/40 transition-all duration-300 w-full sm:w-auto justify-center border border-white/10"
+              className="flex items-center gap-3 px-9 py-4 border border-white/10 bg-white/[0.02] backdrop-blur text-inho-text font-medium text-base rounded-2xl hover:border-inho-gold/40 transition-all duration-300 w-full sm:w-auto justify-center"
             >
-              Conhecer a visão
+              Ver como funciona
               <ChevronRight size={18} />
             </Link>
           </div>
 
           {/* Trust row */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-14 text-inho-muted text-sm animate-fade-in">
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-14 text-inho-muted/70 text-sm animate-fade-in font-mono">
             {['LGPD Compliant', 'Open Finance Ready', '99.9% SLA', 'Auditoria Imutável'].map(t => (
               <span key={t} className="flex items-center gap-2">
-                <CheckCircle2 size={14} className="text-inho-green flex-shrink-0" />
+                <CheckCircle2 size={13} className="text-inho-green flex-shrink-0" />
                 {t}
               </span>
             ))}
@@ -184,20 +228,21 @@ export default function HomePage() {
           <div className="flex flex-col gap-6">
             <div className="inline-flex items-center gap-2 glassmorphism rounded-full px-4 py-2 w-fit">
               <Globe2 size={14} className="text-inho-gold" />
-              <span className="font-mono text-xs text-inho-muted uppercase tracking-widest">Missão e Visão</span>
+              <span className="font-mono text-xs text-inho-muted uppercase tracking-widest">Por que o INHO existe</span>
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-inho-text leading-tight">
-              Tecnologia que <span className="text-shimmer">transforma</span> realidades
+              Você perde dinheiro toda semana{' '}
+              <span className="text-shimmer">sem perceber</span>
             </h2>
             <p className="text-inho-muted text-lg leading-relaxed">
-              O INHO nasceu da convicção de que ferramentas financeiras de classe institucional devem estar acessíveis a organizações que geram impacto social real. Nossa missão é democratizar a gestão financeira de alta performance.
+              Cada planilha desatualizada, cada contrato perdido no e-mail, cada venda sem rastreio — são centavos que sangram silenciosamente. O INHO centraliza contratos, pedidos de venda, caixa físico e CRM numa única plataforma auditada, para que você tenha clareza total de onde sua empresa está hoje e para onde ela vai amanhã.
             </p>
             <p className="text-inho-muted leading-relaxed">
-              Construído sobre uma infraestrutura assíncrona de alta disponibilidade — FastAPI, PostgreSQL e Next.js — o INHO oferece processamento financeiro seguro, auditável e escalável, do primeiro centavo ao bilionésimo.
+              Construído sobre <strong className="text-inho-text">FastAPI assíncrono</strong>, <strong className="text-inho-text">PostgreSQL com pool persistente</strong> e <strong className="text-inho-text">Next.js com SSR</strong> — o INHO oferece performance de nível institucional para empresas de qualquer porte. Sem vendor lock-in. Sem surpresas no mês.
             </p>
             <Link href="/register" id="about-cta"
               className="group inline-flex items-center gap-2 text-inho-gold font-semibold hover:gap-3 transition-all w-fit">
-              Começar gratuitamente <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              Assinar por R$ 290/mês <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
@@ -209,11 +254,11 @@ export default function HomePage() {
                 Sistema Operacional · API v1.0.0
               </div>
               {[
-                { label: 'Throughput',     value: '12.4k req/s', color: 'text-inho-gold' },
-                { label: 'Latência P99',   value: '18ms',        color: 'text-inho-green' },
-                { label: 'DB Pool',        value: '10/10 conn',  color: 'text-inho-blue' },
-                { label: 'Audit Events',   value: '99.98% cap',  color: 'text-inho-gold' },
-                { label: 'Auth Success',   value: '99.7%',       color: 'text-inho-green' },
+                { label: 'Throughput', value: '12.4k req/s', color: 'text-inho-gold' },
+                { label: 'Latência P99', value: '18ms', color: 'text-inho-green' },
+                { label: 'DB Pool', value: '10/10 conn', color: 'text-inho-blue' },
+                { label: 'Audit Events', value: '99.98% cap', color: 'text-inho-gold' },
+                { label: 'Auth Success', value: '99.7%', color: 'text-inho-green' },
               ].map(({ label, value, color }) => (
                 <div key={label} className="flex items-center justify-between py-3 border-b border-inho-border last:border-0">
                   <span className="text-inho-muted text-sm font-mono">{label}</span>
@@ -235,7 +280,7 @@ export default function HomePage() {
               <span className="font-mono text-xs text-inho-muted uppercase tracking-widest">Plataforma Completa</span>
             </div>
             <h2 className="text-4xl sm:text-5xl font-black text-inho-text mb-4">
-              Tudo que você precisa, <span className="text-shimmer">sem compromissos</span>
+              Tudo que você precisa, <span className="text-shimmer">num único lugar</span>
             </h2>
             <p className="text-inho-muted text-lg max-w-2xl mx-auto">
               Uma stack moderna construída para resistir ao tempo, escalar sem dor e auditável por design desde o primeiro commit.
@@ -315,10 +360,15 @@ export default function HomePage() {
       <section id="cta" aria-label="Call to Action" className="py-28 bg-inho-dark/50 border-y border-inho-border">
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
           <h2 className="text-4xl sm:text-5xl font-black text-inho-text mb-6 leading-tight">
-            Pronto para financiar <span className="text-shimmer">o futuro</span>?
+            Sua empresa merece{' '}
+            <span className="text-shimmer">clareza financeira</span>
           </h2>
-          <p className="text-inho-muted text-lg mb-10 max-w-xl mx-auto">
-            Junte-se à plataforma que une performance institucional com propósito social genuíno. Comece hoje, sem cartão de crédito.
+          <p className="text-inho-muted text-lg mb-4 max-w-xl mx-auto">
+            Cada mês sem o INHO é um mês com contratos extraviados, caixa sem rastreio e decisões no escuro. Chega.
+          </p>
+          <p className="text-inho-muted text-base mb-10 max-w-xl mx-auto">
+            <strong className="text-inho-gold font-bold">R$ 290/mês.</strong>{' '}
+            Plataforma completa. Sem surpresas. Sem letras miúdas.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
@@ -326,10 +376,13 @@ export default function HomePage() {
               id="final-cta-register"
               className="group flex items-center gap-3 px-10 py-4 bg-inho-gold-gradient text-inho-black font-black text-lg rounded-2xl hover:shadow-inho-gold hover:-translate-y-1 transition-all duration-300 w-full sm:w-auto justify-center animate-glow-pulse"
             >
-              Criar conta gratuita
+              Assinar o INHO — R$ 290/mês
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
+          <p className="mt-5 text-inho-muted/50 text-xs font-mono tracking-widest">
+            Acesso imediato · Suporte incluído · Cancele quando quiser
+          </p>
         </div>
       </section>
 

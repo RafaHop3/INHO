@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client';
 
 import { useState } from 'react';
@@ -16,11 +15,11 @@ const requirements = [
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({ full_name: '', email: '', password: '', confirm: '' });
-  const [showPass, setShowPass]     = useState(false);
+  const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [loading, setLoading]       = useState(false);
-  const [error, setError]           = useState('');
-  const [success, setSuccess]       = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -80,7 +79,7 @@ export default function RegisterPage() {
           <h1 className="text-4xl font-black text-inho-text mb-2">
             Crie sua <span className="text-shimmer">conta</span>
           </h1>
-          <p className="text-inho-muted text-sm">Gratuito · Sem cartão de crédito</p>
+          <p className="text-inho-muted text-sm">R$&nbsp;290/mês · Cancele quando quiser</p>
         </div>
 
         {/* Success State */}
@@ -190,11 +189,10 @@ export default function RegisterPage() {
                   value={form.confirm}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className={`w-full bg-inho-dark/50 border rounded-xl pl-11 pr-12 py-3.5 text-inho-text text-sm placeholder:text-inho-muted/50 focus:outline-none focus:bg-inho-dark transition-all ${
-                    form.confirm && form.confirm !== form.password
-                      ? 'border-red-500/40 focus:border-red-500/60'
-                      : 'border-inho-border focus:border-inho-gold/50'
-                  }`}
+                  className={`w-full bg-inho-dark/50 border rounded-xl pl-11 pr-12 py-3.5 text-inho-text text-sm placeholder:text-inho-muted/50 focus:outline-none focus:bg-inho-dark transition-all ${form.confirm && form.confirm !== form.password
+                    ? 'border-red-500/40 focus:border-red-500/60'
+                    : 'border-inho-border focus:border-inho-gold/50'
+                    }`}
                 />
                 <button type="button" onClick={() => setShowConfirm(p => !p)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-inho-muted hover:text-inho-text transition-colors"
@@ -214,7 +212,7 @@ export default function RegisterPage() {
               {loading ? (
                 <><div className="w-4 h-4 border-2 border-inho-black/40 border-t-inho-black rounded-full animate-spin" />Criando conta...</>
               ) : (
-                <>Criar conta gratuita<ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" /></>
+                <><span>Criar minha conta</span><ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" /></>
               )}
             </button>
 

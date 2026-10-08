@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setIsLoading(true);
             try {
                 const res = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'}/api/v1/auth/refresh`,
+                    `https://s65ofps3ve.execute-api.us-east-1.amazonaws.com/api/v1/auth/refresh`,
                     { method: 'POST', credentials: 'include' }
                 );
                 if (res.ok) {
